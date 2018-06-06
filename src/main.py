@@ -1,1 +1,3 @@
-print("My first step")
+
+if __name__ == "__main__":
+    print("My first step")

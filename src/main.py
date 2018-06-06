@@ -2,19 +2,21 @@ import logging
 import openpyxl
 from openpyxl.styles import colors
 from openpyxl import Workbook
-from openpyxl.styles import Font, Color, Alignment
+from openpyxl.styles import Font, Color, Alignment, PatternFill
 
 
-def format_workbook(adjust_content=True, font=None, header=1,\
+
+def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
                     odd_bg=None, even_bg=None, thousand_separator=True):
     # print("Formatting workbook")
     logging.info('Format workbook')
     logging.info('adjust_content %r', adjust_content)
-    logging.info('font %s', font)
-    logging.info('header %d', header)
-    logging.info('odd_bg %s', odd_bg)
-    logging.info('even_bg %s', even_bg)
-    logging.info('thousand_separator %r', thousand_separator)
+    logging.info('font :      %s', font)
+    logging.info('header :    %d', header)
+    logging.info('header_bg : %s', header_bg)
+    logging.info('odd_bg :    %s', odd_bg)
+    logging.info('even_bg :   %s', even_bg)
+    logging.info('thousand_separator : %r', thousand_separator)
     wb = openpyxl.load_workbook(filename='./res/input.xlsx')
 
 
@@ -42,11 +44,34 @@ def format_workbook(adjust_content=True, font=None, header=1,\
     #         cell.style = Alignment(wrapText=True)
 
 
-    # Change background<
+    # 2. Change cell font
     for row in ws.iter_rows():
         for cell in row:
             cell.font = Font(name='Ubuntu')
             #cell.font = Font(name='Ubuntu', color=colors.RED)
+
+    # Select backgrounds - Cheating
+    odd_bg = 'FF0000'
+    even_bg = '00FF00'
+    header_bg = '0000FF'
+
+    # 3. Update cell background (header, odd,even)
+    for row in ws.iter_rows():
+
+        bg = 'FFFFFF'
+        row_number = row[0].row
+        if header == row_number:
+            bg = header_bg
+        else:
+            if row_number % 2 == 0:
+                bg = even_bg # Even
+            else:
+                bg = odd_bg  # Odd
+
+        print(row[0].row)
+        for cell in row:
+            #cell.fill = PatternFill(fgColor="FFC7CE", fill_type = "solid")
+            cell.fill = PatternFill(fgColor=bg, fill_type = "solid")
 
     # Save output to new filename
     wb.save(filename='./res/input_generated.xlsx')

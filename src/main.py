@@ -27,17 +27,16 @@ def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
 
     # 1. Adjust content
     for col in ws.columns:
-         max_length = 0
-         column = col[0].column # Get the column name
-         for cell in col:
-             try: # Necessary to avoid error on empty cells
-                 if len(str(cell.value)) > max_length:
-                     max_length = len(cell.value)
-             except:
-                 pass
-         #adjusted_width = (max_length + 2) * 1.2
-         adjusted_width = (max_length + 2)
-         ws.column_dimensions[column].width = adjusted_width
+        max_length = 0
+        column = col[0].column  # Get the column name
+        for cell in col:
+            try:  # Necessary to avoid error on empty cells
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except():
+                pass
+        adjusted_width = (max_length + 2)
+        ws.column_dimensions[column].width = adjusted_width
     # for row in ws.iter_rows():
     #     for cell in row:
     #         cell.style = Alignment(wrapText=True)
@@ -62,20 +61,16 @@ def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
             bg = header_bg
         else:
             if row_number % 2 == 0:
-                bg = even_bg # Even
+                bg = even_bg  # Even
             else:
                 bg = odd_bg  # Odd
         for cell in row:
-            #cell.fill = PatternFill(fgColor="FFC7CE", fill_type = "solid")
-            cell.fill = PatternFill(fgColor=bg, fill_type = "solid")
-
+            cell.fill = PatternFill(fgColor=bg, fill_type="solid")
 
     # 4. Add thousands separator
     for row in ws.iter_rows():
         for cell in row:
             cell.number_format = u'#,##0.00'
-
-
 
     # Save output to new filename
     wb.save(filename='./res/input_generated.xlsx')

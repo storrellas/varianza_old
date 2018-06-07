@@ -19,7 +19,6 @@ def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
     logging.info('thousand_separator : %r', thousand_separator)
     wb = openpyxl.load_workbook(filename='./res/input.xlsx')
 
-
     # Print current sheetnames
     print (wb.sheetnames)
 
@@ -43,16 +42,15 @@ def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
     #     for cell in row:
     #         cell.style = Alignment(wrapText=True)
 
-
     # 2. Change cell font
     for row in ws.iter_rows():
         for cell in row:
             cell.font = Font(name='Ubuntu')
-            #cell.font = Font(name='Ubuntu', color=colors.RED)
+            # cell.font = Font(name='Ubuntu', color=colors.RED)
 
     # Select backgrounds - Cheating
     odd_bg = 'FF0000'
-    even_bg = '00FF00'
+    even_bg = '00F700'
     header_bg = '0000FF'
 
     # 3. Update cell background (header, odd,even)
@@ -67,11 +65,17 @@ def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
                 bg = even_bg # Even
             else:
                 bg = odd_bg  # Odd
-
-        print(row[0].row)
         for cell in row:
             #cell.fill = PatternFill(fgColor="FFC7CE", fill_type = "solid")
             cell.fill = PatternFill(fgColor=bg, fill_type = "solid")
+
+
+    # 4. Add thousands separator
+    for row in ws.iter_rows():
+        for cell in row:
+            cell.number_format = u'#,##0.00'
+
+
 
     # Save output to new filename
     wb.save(filename='./res/input_generated.xlsx')

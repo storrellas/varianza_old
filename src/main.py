@@ -32,20 +32,20 @@ def format_workbook(adjust_content=True, font=None, header=1, header_bg=None,\
     for col in ws.columns:
         max_length = 0
         column = col[0].column  # Get the column name
+
+
         for cell in col:
             try:  # Necessary to avoid error on empty cells
                 if len(str(cell.value)) > max_length:
                     max_length = len(cell.value)
-            except:
+            except Exception:
                 pass
-        adjusted_width = (max_length + 2)
+
+        print('Evaluating', column, max_length)
+
+        adjusted_width = (max_length + 2) * 2
         ws.column_dimensions[column].width = adjusted_width
-
-
-    # for row in ws.iter_rows():
-    #     for cell in row:
-    #         #cell.style.alignment.wrap_text=True
-    #         cell.alignment = Alignment(wrapText=True)
+    # See https://stackoverflow.com/questions/13197574/openpyxl-adjust-column-width-size/14450572
 
 
 

@@ -18,30 +18,33 @@ class VarianzaFormat:
         input_filepath = './res/input.xlsx'
         output_filepath = './res/input_generated.xlsx'
 
-    def run(self, options):
+    def __init__(self):
+        self.options = self.Options()
+
+    def run(self):
         # print("Formatting workbook")
-        logging.info('Format workbook')
-        logging.info('adjust_content %r', options.adjust_content)
-        logging.info('font :      %s', options.font)
-        logging.info('header :    %d', options.header)
-        logging.info('header_bg : %s', options.header_bg)
-        logging.info('odd_bg :    %s', options.odd_bg)
-        logging.info('even_bg :   %s', options.even_bg)
-        logging.info('thousand_separator : %r', options.thousand_separator)
-        wb = openpyxl.load_workbook(filename=options.input_filepath)
+        logging.info('Applying format ...')
+        logging.debug('adjust_content %r', self.options.adjust_content)
+        logging.debug('font :      %s', self.options.font)
+        logging.debug('header :    %d', self.options.header)
+        logging.debug('header_bg : %s', self.options.header_bg)
+        logging.debug('odd_bg :    %s', self.options.odd_bg)
+        logging.debug('even_bg :   %s', self.options.even_bg)
+        logging.debug('thousand_separator : %r', self.options.thousand_separator)
+        wb = openpyxl.load_workbook(filename=self.options.input_filepath)
 
         # Select active Worksheet
         ws = wb.active
 
         # 1. Change cell font
-        if options.font is not None:
+        if self.options.font is not None:
             for row in ws.iter_rows():
                 for cell in row:
-                    cell.font = Font(name=options.font)
+                    cell.font = Font(name=self.options.font)
 
         # 1. Adjust content
         # See https://stackoverflow.com/questions/13197574/openpyxl-adjust-column-width-size/14450572
-        if options.adjust_content:
+        if self.options.adjust_content:
             for col in ws.columns:
                 max_length = 0
                 column = col[0].column  # Get the column name
@@ -60,41 +63,43 @@ class VarianzaFormat:
 
             bg = 'FFFFFF'
             row_number = row[0].row
-            if options.header == row_number:
-                bg = options.header_bg
+            if self.options.header == row_number:
+                bg = self.options.header_bg
             else:
                 if row_number % 2 == 0:
-                    bg = options.even_bg  # Even
+                    bg = self.options.even_bg  # Even
                 else:
-                    bg = options.odd_bg  # Odd
+                    bg = self.options.odd_bg  # Odd
             for cell in row:
                 if bg is not None:
                     cell.fill = PatternFill(fgColor=bg, fill_type="solid")
 
         # 4. Add thousands separator
-        if options.thousand_separator:
+        if self.options.thousand_separator:
             for row in ws.iter_rows():
                 for cell in row:
                     cell.number_format = u'#,##0.00'
 
         # Save output to new filename
-        wb.save(filename=options.output_filepath)
+        wb.save(filename=self.options.output_filepath)
 
         # Close workbook
         wb.close()
+
+        logging.info('DONE!')
 
 
 if __name__ == "__main__":
     FORMAT = "%(asctime)-7s | %(levelname)s  | %(message)s"
     logging.basicConfig(format=FORMAT, level=logging.DEBUG, datefmt='%H:%M:%S')
     logging.info('-- Starting --')
+
     # Set options for VarianzaFormat
-    options = VarianzaFormat.Options()
-    options.font = 'Consolas'
-    options.header_bg = '0000FF'
-    options.odd_bg = 'FF0000'
-    options.even_bg = '00F700'
+    format = VarianzaFormat()
+    format.options.font = 'Consolas'
+    format.options.header_bg = '0000FF'
+    format.options.odd_bg = 'FF0000'
+    format.options.even_bg = '00F700'
 
     # Run the class
-    format = VarianzaFormat()
-    format.run(options)
+    format.run()

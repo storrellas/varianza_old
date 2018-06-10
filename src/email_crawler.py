@@ -53,20 +53,11 @@ print(id_list)
 
 #for i in range(latest_email_id, first_email_id, -1):
 for i in [5]:
-    typ, data = mail.fetch(str(i), '(RFC822)')
-
-    print("NEEEEEEXXXXXXXXXXXXTTTTTTTTT")
-    print("NEEEEEEXXXXXXXXXXXXTTTTTTTTT")
-    print("NEEEEEEXXXXXXXXXXXXTTTTTTTTT")
-    #print(data)
+    rv, data = mail.fetch(str(i), '(RFC822)')
     for response_part in data:
-        print("-- SEPARATOR --")
-        print(response_part)
-        """
         if isinstance(response_part, tuple):
-            msg = email.message_from_string(response_part[1])
+            msg = email.message_from_string(response_part[1].decode("utf-8"))
             email_subject = msg['subject']
             email_from = msg['from']
             print('From : ' + email_from + '\n')
             print('Subject : ' + email_subject + '\n')
-        """

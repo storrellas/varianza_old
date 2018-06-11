@@ -1,5 +1,6 @@
 import poplib
 import email
+import os
 
 # Import credentials if any
 try:
@@ -51,8 +52,8 @@ print(id_list)
 # if rv != 'OK':
 #     print("ERROR getting message", num)
 
-#for i in range(latest_email_id, first_email_id, -1):
-for i in [5]:
+for i in range(latest_email_id, first_email_id, -1):
+#for i in [7]:
     rv, data = mail.fetch(str(i), '(RFC822)')
     for response_part in data:
         if isinstance(response_part, tuple):
@@ -61,3 +62,21 @@ for i in [5]:
             email_from = msg['from']
             print('From : ' + email_from + '\n')
             print('Subject : ' + email_subject + '\n')
+
+            # Get attachment
+            for part in msg.walk():
+                if part.get_content_maintype() == 'multipart':
+                    # print part.as_string()
+                    continue
+                if part.get('Content-Disposition') is None:
+                    # print part.as_string()
+                    continue
+                fileName = part.get_filename()
+
+                if bool(fileName):
+                    filePath = os.path.join('.', 'res', 'attachment', fileName)
+                    if not os.path.isfile(filePath):
+                        print(fileName)
+                        fp = open(filePath, 'wb')
+                        fp.write(part.get_payload(decode=True))
+                        fp.close()
